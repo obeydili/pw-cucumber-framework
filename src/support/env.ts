@@ -27,17 +27,26 @@ const envPath = path.resolve(__dirname, `../../env/.env.${env}`);
 dotenv.config({ path: envPath });
 
 // 4. Extract what we need and fail fast if it's missing!
+// Extract without the || '' fallback! Let them be undefined if missing.
 const baseUrl = process.env.BASE_URL;
-const validUser = process.env.VALID_USERNAME || '';
-const validPassword = process.env.VALID_PASSWORD || '';
+const validUser = process.env.VALID_USERNAME;
+const validPassword = process.env.VALID_PASSWORD;
 
+// Fail fast for EVERY required variable!
 if (!baseUrl) {
   throw new Error(`CRITICAL: BASE_URL is missing in env/.env.${env}`);
 }
+if (!validUser) {
+  throw new Error(`CRITICAL: VALID_USERNAME is missing in env/.env.${env}`);
+}
+if (!validPassword) {
+  throw new Error(`CRITICAL: VALID_PASSWORD is missing in env/.env.${env}`);
+}
 
+// Export safely, knowing TypeScript is happy because we proved they aren't undefined!
 export const config: AppConfig = {
   env,
   baseUrl,
   validUser,
-  validPassword 
+  validPassword,
 };
