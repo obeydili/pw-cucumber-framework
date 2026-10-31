@@ -13,8 +13,9 @@
   },
   "scripts": {
     "postinstall": "npx playwright install chromium",
-    "test": "NODE_OPTIONS='--import tsx' cucumber-js --import 'src/support/**/*.ts' --import 'src/steps/**/*.ts' --format html:reports/cucumber-report.html --format progress",
+    "test": "NODE_OPTIONS='--import tsx' cucumber-js",
     "test:dry": "NODE_OPTIONS='--import tsx' cucumber-js --dry-run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "auth:save": "tsx scripts/save-auth.ts"
   }
 }

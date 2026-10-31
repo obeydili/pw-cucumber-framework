@@ -33,3 +33,8 @@ Then('I should be redirected to the orders page', async function (this: CustomWo
   // A simple Playwright assertion to verify the UI actually moved!
   await expect(this.page).toHaveURL(/.*orders.*/);
 });
+
+Then('I should be on the orders page', async function (this: CustomWorld) {
+  // ASSERTION: Verify we didn't get kicked back to the login screen!
+  await expect(this.page).toHaveURL(/.*orders.*/);
+});
