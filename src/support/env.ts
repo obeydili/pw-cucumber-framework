@@ -41,7 +41,7 @@ const baseUrl = process.env.BASE_URL;
 const validPassword = process.env.VALID_PASSWORD;
 const validUser = usersData.trader?.username;
 const approverUser = usersData.approver?.username;
-const isHeadless = process.env.HEADLESS === 'true';
+const isHeadless = process.env.HEADLESS != 'false';
 
 // FIX: The Fail-Fast Gauntlet!
 if (!baseUrl) throw new Error(`CRITICAL: BASE_URL is missing in env/.env.${env}`);
