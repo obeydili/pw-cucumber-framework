@@ -11,7 +11,7 @@ export class DataFactory {
   /**
    * Loads a JSON template, injects a unique clientOrderId, and applies any specific overrides you want for the test.
    */
-  static getOrderData(templateName: string, overrides: Partial<Record<keyof OrderPayload, unknown>> = {}) {
+  static getOrderData(templateName: string, overrides: Partial<Record<keyof OrderPayload, unknown>> = {}): OrderPayload {
     // 1. Resolve the path firmly relative to THIS exact file! (No more process.cwd())
     const templatePath = path.resolve(__dirname, `templates/${templateName}.json`);
 

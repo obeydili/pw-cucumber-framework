@@ -2,6 +2,9 @@ import { BeforeAll, AfterAll, Before, After, Status, setDefaultTimeout } from '@
 import { chromium, Browser } from '@playwright/test';
 import { CustomWorld } from './world';
 import { config } from './env';
+import { AuthActions } from '../actions/AuthActions';
+import { ApiClient } from '../api/ApiClient';
+import { OrdersApi } from '../api/OrdersApi';
 import * as fs from 'fs';
 
 // Give UI tests up to 10 seconds per step!
@@ -18,7 +21,6 @@ BeforeAll(async function () {
 
 Before(async function (this: CustomWorld, scenario) {
   this.browser = browser;
-
   // 1. Check the Cucumber tags for this specific scenario
   const tags = scenario.pickle.tags.map((tag) => tag.name);
 
@@ -43,6 +45,26 @@ Before(async function (this: CustomWorld, scenario) {
   });
 
   this.page = await this.context.newPage();
+  // --- API SETUP ---
+  // If the scenario requires API access, initialize this.api!
+  if (tags.includes('@api')) {
+    const authActions = new AuthActions();
+    let token = '';
+
+    // Fetch the correct token based on the role
+    if (tags.includes('@as-trader')) {
+      token = await authActions.apiLogin(config.validUser, config.validPassword);
+    } else if (tags.includes('@as-approver')) {
+      token = await authActions.apiLogin(config.approverUser, config.validPassword);
+    }
+
+    if (token) {
+      // Build our strict ApiClient using the token!
+      this.api = await ApiClient.create(token);
+      // Instantiate our wrapper so step definitions can use it instantly!
+      this.ordersApi = new OrdersApi(this.api);
+    }
+  }
 });
 
 After(async function (this: CustomWorld, scenario) {
@@ -57,6 +79,8 @@ After(async function (this: CustomWorld, scenario) {
   // SAFE TEARDOWN: Use optional chaining (?.) so it doesn't crash if they are undefined
   await this.page?.close();
   await this.context?.close();
+  // Clean up the API Context!
+  await this.api?.dispose();
 });
 
 AfterAll(async function () {

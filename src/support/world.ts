@@ -1,5 +1,6 @@
 import { setWorldConstructor, World, IWorldOptions } from '@cucumber/cucumber';
 import { Browser, BrowserContext, Page, APIRequestContext } from '@playwright/test';
+import { OrdersApi } from '../api/OrdersApi';
 
 // 1. Define our Custom World class extending Cucumber's default World
 export class CustomWorld extends World {
@@ -7,6 +8,7 @@ export class CustomWorld extends World {
   context!: BrowserContext;
   page!: Page;
   api!: APIRequestContext;
+  ordersApi!: OrdersApi;
 
   // Add a dictionary to hold any dynamic data between steps
   scenarioData: Record<string, unknown>;

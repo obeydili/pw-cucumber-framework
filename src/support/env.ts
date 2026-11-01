@@ -7,6 +7,7 @@ export interface AppConfig {
   env: string;
   baseUrl: string;
   validUser: string;
+  approverUser: string;
   validPassword: string;
 }
 
@@ -30,6 +31,7 @@ dotenv.config({ path: envPath });
 // Extract without the || '' fallback! Let them be undefined if missing.
 const baseUrl = process.env.BASE_URL;
 const validUser = process.env.VALID_USERNAME;
+const approverUser = process.env.APPROVER_USERNAME; 
 const validPassword = process.env.VALID_PASSWORD;
 
 // Fail fast for EVERY required variable!
@@ -38,6 +40,9 @@ if (!baseUrl) {
 }
 if (!validUser) {
   throw new Error(`CRITICAL: VALID_USERNAME is missing in env/.env.${env}`);
+}
+if (!approverUser) {
+  throw new Error(`CRITICAL: APPROVER_USERNAME is missing in env/.env.${env}`);
 }
 if (!validPassword) {
   throw new Error(`CRITICAL: VALID_PASSWORD is missing in env/.env.${env}`);
@@ -48,5 +53,6 @@ export const config: AppConfig = {
   env,
   baseUrl,
   validUser,
+  approverUser,
   validPassword,
 };

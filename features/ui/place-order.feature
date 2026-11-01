@@ -5,7 +5,7 @@ Feature: Place Order
     When I place a limit "<side>" order
     Then I should see the order in the orders list
     When I view the order details
-    And the order status should be "Pending Approval"
+    Then the order status should be "Pending Approval"
 
     Examples:
       | side |

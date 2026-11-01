@@ -7,7 +7,7 @@ export interface OrderPayload {
   symbol: string;
   side: string;
   quantity: number;
-  limitPrice: number;
+  limitPrice: number | string;
   clientOrderId?: string; // Optional, injected by the DataFactory
 }
 
