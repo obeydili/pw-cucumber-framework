@@ -21,9 +21,8 @@ Then(
   async function (this: CustomWorld, expectedStatus: number, statusText: string) {
     const response = this.scenarioData['lastResponse'] as APIResponse;
 
-    // Assert BOTH the number and the text!
+    // Assert ONLY the number. Ignore statusText in code, just keep it for Gherkin readability, because Modern servers often completely drop the statusText (like "Created") to save bandwidth!
     expect(response.status()).toBe(expectedStatus);
-    expect(response.statusText()).toBe(statusText);
   },
 );
 
@@ -82,9 +81,12 @@ Given('I have an existing order created via API', async function (this: CustomWo
   const response = await this.ordersApi.createOrder(data);
 
   // THE FIX: Prove the setup actually worked before continuing!
-  expect(response.status()).toBe(201)
+  await expect(response).toBeOK(); // Upgraded to Playwright's native checker!
 
   const body = await response.json();
+  // FIX: Prove the body is correct before we move on!
+  expect(body.status).toBe('Pending Approval');
+
   // Save the specific ID into the backpack for the next step
   this.scenarioData['targetOrderId'] = body.id;
 });

@@ -1,6 +1,10 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import * as fs from 'fs';
 import { fileURLToPath } from 'url'; // Required if using Option 2
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Define the strict contract for our environment configuration
 export interface AppConfig {
@@ -20,35 +24,29 @@ const env = process.env.ENV || 'dev';
 //const envPath = path.resolve(process.cwd(), `env/.env.${env}`);
 
 // --- OPTION 2: import.meta.url (Robust, calculates relative to this exact file) ---
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const envPath = path.resolve(__dirname, `../../env/.env.${env}`);
 
 // 3. Load the variables from that file into process.env
 dotenv.config({ path: envPath });
 
+// Load users from the JSON file!
+const usersPath = path.resolve(__dirname, '../data/templates/users.json');
+const usersData = JSON.parse(fs.readFileSync(usersPath, 'utf8'));
+
 // 4. Extract what we need and fail fast if it's missing!
 // Extract without the || '' fallback! Let them be undefined if missing.
+// Extract them to variables first!
 const baseUrl = process.env.BASE_URL;
-const validUser = process.env.VALID_USERNAME;
-const approverUser = process.env.APPROVER_USERNAME; 
 const validPassword = process.env.VALID_PASSWORD;
+const validUser = usersData.trader?.username;
+const approverUser = usersData.approver?.username;
 
-// Fail fast for EVERY required variable!
-if (!baseUrl) {
-  throw new Error(`CRITICAL: BASE_URL is missing in env/.env.${env}`);
-}
-if (!validUser) {
-  throw new Error(`CRITICAL: VALID_USERNAME is missing in env/.env.${env}`);
-}
-if (!approverUser) {
-  throw new Error(`CRITICAL: APPROVER_USERNAME is missing in env/.env.${env}`);
-}
-if (!validPassword) {
-  throw new Error(`CRITICAL: VALID_PASSWORD is missing in env/.env.${env}`);
-}
+// FIX: The Fail-Fast Gauntlet!
+if (!baseUrl) throw new Error(`CRITICAL: BASE_URL is missing in env/.env.${env}`);
+if (!validPassword) throw new Error(`CRITICAL: VALID_PASSWORD is missing in env/.env.${env}`);
+if (!validUser) throw new Error(`CRITICAL: trader username is missing in users.json`);
+if (!approverUser) throw new Error(`CRITICAL: approver username is missing in users.json`);
 
-// Export safely, knowing TypeScript is happy because we proved they aren't undefined!
 export const config: AppConfig = {
   env,
   baseUrl,

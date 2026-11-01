@@ -24,44 +24,55 @@ Before(async function (this: CustomWorld, scenario) {
   // 1. Check the Cucumber tags for this specific scenario
   const tags = scenario.pickle.tags.map((tag) => tag.name);
 
-  // 2. Determine if we need to inject a saved session
-  let storageState: string | undefined = undefined;
-  if (tags.includes('@as-trader')) {
-    storageState = 'auth/trader.json';
-  } else if (tags.includes('@as-approver')) {
-    storageState = 'auth/approver.json';
-  }
+  const isApiOnly = tags.includes('@api');
+  const isHybrid = tags.includes('@hybrid');
 
-  // ADD THIS SAFETY CHECK:
-  if (storageState && !fs.existsSync(storageState)) {
-    throw new Error(
-      `CRITICAL: Session file not found at ${storageState}. Please run 'npm run auth:save' first!`,
-    );
-  }
-  // 3. Launch the context with the base URL AND the injected cookies (if any)
-  this.context = await this.browser.newContext({
-    baseURL: config.baseUrl,
-    storageState: storageState,
-  });
-
-  this.page = await this.context.newPage();
-  // --- API SETUP ---
-  // If the scenario requires API access, initialize this.api!
-  if (tags.includes('@api')) {
-    const authActions = new AuthActions();
-    let token = '';
-
-    // Fetch the correct token based on the role
+  // --- UI SETUP (For normal UI tests OR Hybrid tests) ---
+  if (!isApiOnly || isHybrid) {
+    // 2. Determine if we need to inject a saved session
+    let storageState: string | undefined = undefined;
     if (tags.includes('@as-trader')) {
-      token = await authActions.apiLogin(config.validUser, config.validPassword);
+      storageState = 'auth/trader.json';
     } else if (tags.includes('@as-approver')) {
-      token = await authActions.apiLogin(config.approverUser, config.validPassword);
+      storageState = 'auth/approver.json';
     }
 
-    if (token) {
-      // Build our strict ApiClient using the token!
+    // ADD THIS SAFETY CHECK:
+    if (storageState && !fs.existsSync(storageState)) {
+      throw new Error(
+        `CRITICAL: Session file not found at ${storageState}. Please run 'npm run auth:save' first!`,
+      );
+    }
+    // 3. Launch the context with the base URL AND the injected cookies (if any)
+    this.context = await this.browser.newContext({
+      baseURL: config.baseUrl,
+      storageState: storageState,
+    });
+
+    this.page = await this.context.newPage();
+  }
+
+  // --- API SETUP (For API tests OR Hybrid tests) ---
+
+  if (isApiOnly || isHybrid) {
+    const authActions = new AuthActions();
+
+    // If it's a Hybrid test, we need BOTH roles so the Trader can use the UI and the Approver can use the API!
+    if (isHybrid) {
+      const approverToken = await authActions.apiLogin(config.approverUser, config.validPassword);
+      this.apiContexts['approver'] = await ApiClient.create(approverToken);
+    }
+    // Legacy single-role logic for standard @api tests
+    else {
+      let token = '';
+      if (tags.includes('@as-trader')) {
+        token = await authActions.apiLogin(config.validUser, config.validPassword);
+      } else if (tags.includes('@as-approver')) {
+        token = await authActions.apiLogin(config.approverUser, config.validPassword);
+      } else {
+        throw new Error(`CRITICAL: API test missing role tag.`);
+      }
       this.api = await ApiClient.create(token);
-      // Instantiate our wrapper so step definitions can use it instantly!
       this.ordersApi = new OrdersApi(this.api);
     }
   }
@@ -81,6 +92,9 @@ After(async function (this: CustomWorld, scenario) {
   await this.context?.close();
   // Clean up the API Context!
   await this.api?.dispose();
+  if (this.apiContexts['approver']) {
+    await this.apiContexts['approver'].dispose();
+  }
 });
 
 AfterAll(async function () {

@@ -10,6 +10,9 @@ export class CustomWorld extends World {
   api!: APIRequestContext;
   ordersApi!: OrdersApi;
 
+  // A dictionary to hold multiple roles at once!
+  apiContexts!: Record<string, APIRequestContext>;
+
   // Add a dictionary to hold any dynamic data between steps
   scenarioData: Record<string, unknown>;
 
@@ -17,6 +20,7 @@ export class CustomWorld extends World {
     super(options);
     // Initialize it as an empty object for every new scenario
     this.scenarioData = {};
+    this.apiContexts = {}; 
   }
 }
 
