@@ -32,11 +32,10 @@ jobs:
           # Install Chromium for Playwright
           npx playwright install chromium --with-deps
 
-      # 4. Create the Environment File using GitHub Secrets!
+      # 4. Create the Environment File (NO SECRETS ON DISK!)
       - name: Create QA Env File
         run: |
           echo "BASE_URL=http://localhost:3200" > env/.env.qa
-          echo VALID_PASSWORD=${{ secrets.VALID_PASSWORD }} make test ENV=qa
 
       # 5. Start Practice App and Wait
       - name: Start Practice App
@@ -47,12 +46,11 @@ jobs:
           # Wait for the app to actually be ready!
           npx wait-on http://localhost:3200
 
-      # 6. Run the tests specifically on QA!
+      # 6. Run the tests with SECURE INLINE SECRETS!
       - name: Run Smoke Suite
         run: |
-          # Force QA environment for both auth and tests!
-          make auth ENV=qa
-          make test ENV=qa TAGS=@smoke
+          VALID_PASSWORD=${{ secrets.VALID_PASSWORD }} make auth ENV=qa
+          VALID_PASSWORD=${{ secrets.VALID_PASSWORD }} make test ENV=qa TAGS=@smoke
 
       # 7. ALWAYS upload the entire reports folder!
       - name: Upload HTML Report
