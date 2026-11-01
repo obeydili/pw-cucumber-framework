@@ -8,9 +8,9 @@ Feature: Login
   
   @ui @smoke
   Scenario: Failed Login with invalid credentials
-    Given I navigate to the login page
-    When I login with username "hacker" and password "badpass"
-    Then I should see an error message
+       Given I navigate to the login page
+       When I login with invalid credentials
+       Then I should see an error message
 
   @ui @as-trader
   Scenario: Bypass login using saved session

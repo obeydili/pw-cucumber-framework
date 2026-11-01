@@ -15,8 +15,7 @@ let browser: Browser;
 BeforeAll(async function () {
   // Check the environment variable. Default to 'false' (visible) for local debugging,
   // but if CI passes HEADLESS='true', it runs silently in the background!
-  const isHeadless = process.env.HEADLESS === 'true';
-  browser = await chromium.launch({ headless: isHeadless });
+  browser = await chromium.launch({ headless: config.isHeadless });
 });
 
 Before(async function (this: CustomWorld, scenario) {

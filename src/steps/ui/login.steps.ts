@@ -24,9 +24,14 @@ When(
   },
 );
 
+When('I login with invalid credentials', async function (this: CustomWorld) {
+  const auth = new AuthActions(this.page);
+  await auth.loginAs('hacker', 'badpassword');
+});
+
 Then('I should see an error message', async function (this: CustomWorld) {
   const loginPage = new LoginPage(this.page);
-  // Blocker 2 FIXED: No locators leaked! We just ask the POM for the element.
+  // We expect the exact error message element to be visible!
   await expect(loginPage.errorMessage).toBeVisible();
 });
 
