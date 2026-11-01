@@ -1,5 +1,26 @@
-export default {
-    paths: ['features/**/*.feature'],
-    import: ['src/support/**/*.ts', 'src/steps/**/*.ts'],
-    format: ['progress', 'html:reports/cucumber-report.html'],
+const common = {
+  paths: ['features/**/*.feature'],
+  import: ['src/support/**/*.ts', 'src/steps/**/*.ts'],
+  format: ['progress', 'html:reports/cucumber-report.html', 'json:reports/cucumber-report.json'],
+};
+
+// 1. The Default Profile (runs everything)
+export default common;
+
+// 2. The CI Profile (runs everything EXCEPT Work-In-Progress)
+export const ci = {
+  ...common,
+  tags: 'not @wip',
+};
+
+// 3. The Smoke Profile (only runs @smoke, ignores @wip)
+export const smoke = {
+  ...common,
+  tags: '@smoke and not @wip',
+};
+
+// 4. The Regression Profile (runs @regression, ignores @wip)
+export const regression = {
+  ...common,
+  tags: '@regression and not @wip',
 };

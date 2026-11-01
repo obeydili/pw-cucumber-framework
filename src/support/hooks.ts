@@ -90,10 +90,12 @@ After(async function (this: CustomWorld, scenario) {
   // SAFE TEARDOWN: Use optional chaining (?.) so it doesn't crash if they are undefined
   await this.page?.close();
   await this.context?.close();
-  // Clean up the API Context!
+  // Clean up the single API Context!
   await this.api?.dispose();
-  if (this.apiContexts['approver']) {
-    await this.apiContexts['approver'].dispose();
+
+  // THE FIX: Clean up ALL multi-role API Contexts dynamically!
+  for (const ctx of Object.values(this.apiContexts)) {
+    await ctx.dispose();
   }
 });
 
