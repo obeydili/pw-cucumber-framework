@@ -9,3 +9,5 @@ playwright-report/
 blob-report/
 reports/
 .DS_Store
+practice-app/node_modules/
+practice-app/dist/

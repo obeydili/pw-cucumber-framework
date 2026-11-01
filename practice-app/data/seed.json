@@ -1,0 +1,49 @@
+{
+  "users": [
+    { "username": "trader1", "password": "Password123!", "role": "trader", "displayName": "Trader One" },
+    { "username": "approver1", "password": "Password123!", "role": "approver", "displayName": "Approver One" }
+  ],
+  "symbols": ["ACME", "BLUE", "CRSP", "DLTA", "ECHO"],
+  "nextOrderNumber": 1004,
+  "orders": [
+    {
+      "id": "ORD-1001",
+      "clientOrderId": null,
+      "symbol": "ACME",
+      "side": "Buy",
+      "quantity": 100,
+      "limitPrice": 42.5,
+      "status": "Approved",
+      "createdBy": "trader1",
+      "createdAt": "2026-01-05T14:30:00.000Z",
+      "decidedBy": "approver1",
+      "decidedAt": "2026-01-05T14:45:00.000Z"
+    },
+    {
+      "id": "ORD-1002",
+      "clientOrderId": null,
+      "symbol": "BLUE",
+      "side": "Sell",
+      "quantity": 250,
+      "limitPrice": 18.75,
+      "status": "Rejected",
+      "createdBy": "trader1",
+      "createdAt": "2026-01-06T15:10:00.000Z",
+      "decidedBy": "approver1",
+      "decidedAt": "2026-01-06T15:20:00.000Z"
+    },
+    {
+      "id": "ORD-1003",
+      "clientOrderId": null,
+      "symbol": "CRSP",
+      "side": "Buy",
+      "quantity": 50,
+      "limitPrice": 101.2,
+      "status": "Pending Approval",
+      "createdBy": "trader1",
+      "createdAt": "2026-01-07T16:00:00.000Z",
+      "decidedBy": null,
+      "decidedAt": null
+    }
+  ]
+}

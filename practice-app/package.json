@@ -1,0 +1,15 @@
+{
+  "name": "trade-desk-lite",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fake order-ticket app used as the system under test for practice automation.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "start:dev": "PORT=3100 node server.js",
+    "start:qa": "PORT=3200 node server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
