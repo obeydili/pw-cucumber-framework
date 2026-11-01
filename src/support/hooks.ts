@@ -1,8 +1,11 @@
-import { BeforeAll, AfterAll, Before, After, Status } from '@cucumber/cucumber';
+import { BeforeAll, AfterAll, Before, After, Status, setDefaultTimeout } from '@cucumber/cucumber';
 import { chromium, Browser } from '@playwright/test';
 import { CustomWorld } from './world';
 import { config } from './env';
 import * as fs from 'fs';
+
+// Give UI tests up to 10 seconds per step!
+setDefaultTimeout(10 * 1000);
 
 let browser: Browser;
 

@@ -1,6 +1,13 @@
 import { chromium } from '@playwright/test';
+import * as fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { LoginPage } from '../src/pages/LoginPage';
 import { config } from '../src/support/env'; // We use this for the baseURL!
+
+// Recreate __dirname for our ES Module pathing
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 1. The reusable function
 async function saveSession(username: string, password: string, fileName: string) {
@@ -28,9 +35,16 @@ async function saveSession(username: string, password: string, fileName: string)
 
 // 5. Run the script for both roles
 async function main() {
-  // Hardcoding these here is acceptable because this is a one-off utility script, not a test!
-  await saveSession('trader1', config.validPassword, 'trader');
-  await saveSession('approver1', config.validPassword, 'approver');
+  // 1. Read the users.json template dynamically
+  const usersPath = path.resolve(__dirname, '../src/data/templates/users.json');
+  const usersData = JSON.parse(fs.readFileSync(usersPath, 'utf8'));
+
+  // 2. Use the usernames from the JSON instead of hardcoding them!
+  await saveSession(usersData.trader.username, config.validPassword, 'trader');
+  await saveSession(usersData.approver.username, config.validPassword, 'approver');
 }
 
-main().catch(console.error);
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

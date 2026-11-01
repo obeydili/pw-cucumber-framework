@@ -13,6 +13,7 @@
   },
   "scripts": {
     "postinstall": "npx playwright install chromium",
+    "pretest": "npm run auth:save",
     "test": "NODE_OPTIONS='--import tsx' cucumber-js",
     "test:dry": "NODE_OPTIONS='--import tsx' cucumber-js --dry-run",
     "typecheck": "tsc --noEmit",

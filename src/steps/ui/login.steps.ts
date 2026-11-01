@@ -2,6 +2,7 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { CustomWorld } from '../../support/world';
 import { LoginPage } from '../../pages/LoginPage';
+import { AuthActions } from '../../actions/AuthActions';
 import { config } from '../../support/env'; // <-- Import our config!
 
 Given('I navigate to the login page', async function (this: CustomWorld) {
@@ -10,16 +11,16 @@ Given('I navigate to the login page', async function (this: CustomWorld) {
 });
 
 When('I login with valid credentials', async function (this: CustomWorld) {
-  const loginPage = new LoginPage(this.page);
+  const auth = new AuthActions(this.page);
   // Blocker 1 FIXED: No more hardcoded credentials!
-  await loginPage.login(config.validUser, config.validPassword);
+  await auth.loginAs(config.validUser, config.validPassword);
 });
 
 When(
   'I login with username {string} and password {string}',
   async function (this: CustomWorld, user: string, pass: string) {
-    const loginPage = new LoginPage(this.page);
-    await loginPage.login(user, pass);
+    const auth = new AuthActions(this.page);
+    await auth.loginAs(user, pass);
   },
 );
 

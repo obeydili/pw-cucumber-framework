@@ -1,0 +1,10 @@
+{
+  "trader": {
+    "username": "trader1",
+    "role": "Trader"
+  },
+  "approver": {
+    "username": "approver1",
+    "role": "Approver"
+  }
+}
