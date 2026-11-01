@@ -21,4 +21,44 @@ jobs:
         with:
           node-version: '24'
           
-      # 3. What goes here? (This is where your Socratic answer goes!)
+      # 3. Install Dependencies for BOTH App and Framework
+      - name: Install Dependencies
+        run: |
+          # Install app dependencies
+          cd practice-app && npm install
+          cd ..
+          # Install framework dependencies
+          npm ci
+          # Install Chromium for Playwright
+          npx playwright install chromium --with-deps
+
+      # 4. Create the Environment File using GitHub Secrets!
+      - name: Create QA Env File
+        run: |
+          echo "BASE_URL=http://localhost:3200" > env/.env.qa
+          echo "VALID_PASSWORD=${{ secrets.VALID_PASSWORD }}" >> env/.env.qa
+
+      # 5. Start Practice App and Wait
+      - name: Start Practice App
+        run: |
+          cd practice-app
+          # Start it in the background using QA port (3200)
+          npm run start:qa &
+          # Wait for the app to actually be ready!
+          npx wait-on http://localhost:3200
+
+      # 6. Run the tests specifically on QA!
+      - name: Run Smoke Suite
+        run: |
+          # Force QA environment for both auth and tests!
+          make auth ENV=qa
+          make test ENV=qa TAGS=@smoke
+
+      # 7. ALWAYS upload the entire reports folder!
+      - name: Upload HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: reports/
+          retention-days: 7
