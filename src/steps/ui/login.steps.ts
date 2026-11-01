@@ -3,7 +3,14 @@ import { expect } from '@playwright/test';
 import { CustomWorld } from '../../support/world';
 import { LoginPage } from '../../pages/LoginPage';
 import { AuthActions } from '../../actions/AuthActions';
-import { config } from '../../support/env'; // <-- Import our config!
+import { config } from '../../support/env';
+import * as fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+// Recreate __dirname for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 Given('I navigate to the login page', async function (this: CustomWorld) {
   const loginPage = new LoginPage(this.page);
@@ -26,7 +33,14 @@ When(
 
 When('I login with invalid credentials', async function (this: CustomWorld) {
   const auth = new AuthActions(this.page);
-  await auth.loginAs('hacker', 'badpassword');
+  //  Read directly from the Data Layer (users.json)
+  const usersPath = path.resolve(__dirname, '../../data/templates/users.json');
+  const usersData = JSON.parse(fs.readFileSync(usersPath, 'utf8'));
+
+  //  Use the specific persona!
+  const hackerUser = usersData.invalidUser.username;
+  const hackerPass = usersData.invalidUser.password;
+  await auth.loginAs(hackerUser, hackerPass);
 });
 
 Then('I should see an error message', async function (this: CustomWorld) {

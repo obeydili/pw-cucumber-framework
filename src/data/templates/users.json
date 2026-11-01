@@ -6,5 +6,9 @@
   "approver": {
     "username": "approver1",
     "role": "Approver"
+  },
+  "invalidUser": {
+    "username": "hacker",
+    "password": "bad_password_123"
   }
 }

@@ -40,6 +40,8 @@ const usersData = JSON.parse(fs.readFileSync(usersPath, 'utf8'));
 const baseUrl = process.env.BASE_URL;
 const validPassword = process.env.VALID_PASSWORD;
 const validUser = usersData.trader?.username;
+const invalidUser = usersData.invalidUser?.username;
+const invalidPassword = usersData.invalidUser?.password;
 const approverUser = usersData.approver?.username;
 const isHeadless = process.env.HEADLESS != 'false';
 
@@ -48,6 +50,7 @@ if (!baseUrl) throw new Error(`CRITICAL: BASE_URL is missing in env/.env.${env}`
 if (!validPassword) throw new Error(`CRITICAL: VALID_PASSWORD is missing in env/.env.${env}`);
 if (!validUser) throw new Error(`CRITICAL: trader username is missing in users.json`);
 if (!approverUser) throw new Error(`CRITICAL: approver username is missing in users.json`);
+
 
 export const config: AppConfig = {
   env,
