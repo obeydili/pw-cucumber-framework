@@ -45,11 +45,12 @@ jobs:
           npm run start:qa &
           npx --yes wait-on http://localhost:3200
 
-      # 6. Run the tests with SECURE INLINE SECRETS!
+      # 6. Run the tests specifically on QA!
       - name: Run Smoke Suite
+        env:
+          VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
         run: |
-          VALID_PASSWORD=${{ secrets.VALID_PASSWORD }} make auth ENV=qa
-          VALID_PASSWORD=${{ secrets.VALID_PASSWORD }} make test ENV=qa TAGS=@smoke
+          make test ENV=qa TAGS=@smoke
 
       # 7. ALWAYS upload the entire reports folder!
       - name: Upload HTML Report
