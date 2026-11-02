@@ -13,9 +13,9 @@ setDefaultTimeout(10 * 1000);
 let browser: Browser;
 
 BeforeAll(async function () {
-  // Check the environment variable. Default to 'false' (visible) for local debugging,
-  // but if CI passes HEADLESS='true', it runs silently in the background!
-  browser = await chromium.launch({ headless: config.isHeadless });
+  // THE FIX: Updated comment to reflect reality!
+  // Default to headless (hidden) unless explicitly passed HEADLESS=false.
+  browser = await chromium.launch({headless: config.isHeadless});
 });
 
 Before(async function (this: CustomWorld, scenario) {

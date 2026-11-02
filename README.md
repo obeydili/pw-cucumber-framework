@@ -4,7 +4,7 @@ A BDD automation framework built with **Playwright**, **Cucumber**, and **TypeSc
 
 ## 📋 Prerequisites
 * **Node.js**: We use the version specified in the `.nvmrc` file.
-* **Practice App**: The application under test lives in the practice-app/ folder in the parent directory of this repository. Ensure it is running before executing tests!
+* **Practice App**: The application under test lives inside this repository in the `practice-app/` folder. See `practice-app/README.md` for startup instructions!
 
 ## 🛠️ Setup & Installation
 1. Install all dependencies:
