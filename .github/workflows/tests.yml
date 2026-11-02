@@ -43,7 +43,6 @@ jobs:
           cd practice-app
           # Start it in the background using QA port (3200)
           npm run start:qa &
-         # Wait for the app to actually be ready! (Added --yes to prevent CI stall)
           npx --yes wait-on http://localhost:3200
 
       # 6. Run the tests with SECURE INLINE SECRETS!
