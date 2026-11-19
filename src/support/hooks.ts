@@ -54,8 +54,7 @@ Before(async function (this: CustomWorld, scenario) {
     if (isHybrid) {
       const approverToken = await authActions.apiLogin(config.approverUser, config.validPassword);
       this.apiContexts['approver'] = await ApiClient.create(approverToken);
-    }
-    else {
+    } else {
       let token = '';
       if (tags.includes('@as-trader')) {
         token = await authActions.apiLogin(config.validUser, config.validPassword);

@@ -10,7 +10,10 @@ export class DataFactory {
   /**
    * Loads a JSON template, injects a unique clientOrderId, and applies any specific overrides you want for the test.
    */
-  static getOrderData(templateName: string, overrides: Partial<Record<keyof OrderPayload, unknown>> = {}): OrderPayload {
+  static getOrderData(
+    templateName: string,
+    overrides: Partial<Record<keyof OrderPayload, unknown>> = {},
+  ): OrderPayload {
     const templatePath = path.resolve(__dirname, `templates/${templateName}.json`);
 
     if (!fs.existsSync(templatePath)) {

@@ -32,12 +32,18 @@ jobs:
           # Install Chromium for Playwright
           npx playwright install chromium --with-deps
 
-      # 4. Create the Environment File (NO SECRETS ON DISK!)
+      # 4. Static checks
+      - name: Lint and typecheck
+        run: |
+          npm run lint
+          npm run typecheck
+
+      # 5. Create the Environment File (NO SECRETS ON DISK!)
       - name: Create QA Env File
         run: |
           echo "BASE_URL=http://localhost:3200" > env/.env.qa
 
-      # 5. Start Practice App and Wait
+      # 6. Start Practice App and Wait
       - name: Start Practice App
         run: |
           cd practice-app
@@ -45,14 +51,14 @@ jobs:
           npm run start:qa &
           npx --yes wait-on http://localhost:3200
 
-      # 6. Run the tests specifically on QA!
+      # 7. Run the tests specifically on QA!
       - name: Run Smoke Suite
         env:
           VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
         run: |
           make test ENV=qa TAGS=@smoke
 
-      # 7. ALWAYS upload the entire reports folder!
+      # 8. ALWAYS upload the entire reports folder!
       - name: Upload HTML Report
         if: always()
         uses: actions/upload-artifact@v4

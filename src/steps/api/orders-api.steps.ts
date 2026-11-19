@@ -14,7 +14,7 @@ When('I create a valid order via API', async function (this: CustomWorld) {
 // The trailing {} captures the reason phrase ("Created", "Forbidden") so the Gherkin reads naturally.
 Then(
   'the API response should be {int} {}',
-  async function (this: CustomWorld, expectedStatus: number, statusText: string) {
+  async function (this: CustomWorld, expectedStatus: number, _statusText: string) {
     const response = this.scenarioData['lastResponse'] as APIResponse;
 
     // Only the status code is asserted: the reason phrase is optional in HTTP and many servers omit it.

@@ -1,0 +1,5 @@
+node_modules/
+practice-app/
+reports/
+auth/
+package-lock.json

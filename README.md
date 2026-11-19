@@ -16,6 +16,7 @@ The application under test lives in [`practice-app/`](practice-app/README.md). I
 | Configuration | `dotenv`, one file per environment in `env/` |
 | CI | GitHub Actions: smoke suite on every push and pull request, HTML report uploaded as an artifact |
 | Runtime | Node.js 24 (see `.nvmrc`) |
+| Code quality | `oxlint` (ESLint-compatible rules) and Prettier, checked in CI |
 
 ## Project structure
 
@@ -91,6 +92,7 @@ Then fill in the env files:
    | `make test ENV=qa TAGS=@hybrid` | Any tag expression against any environment |
    | `npm run test:dry` | Checks that every step has a definition, without running anything |
    | `npm run typecheck` | `tsc --noEmit` |
+   | `npm run lint` / `npm run format` | oxlint and Prettier check, or Prettier fix |
 
 `npm test` first runs `npm run auth:save` (an npm `pretest` hook), which logs in as each role and writes `auth/trader.json` and `auth/approver.json`. Run `make auth` to refresh the sessions on their own, for example after restarting the app (sessions are kept in memory).
 
@@ -100,7 +102,11 @@ Each run writes `reports/cucumber-report.html` and `reports/cucumber-report.json
 
 ## Continuous integration
 
-[`.github/workflows/tests.yml`](.github/workflows/tests.yml) installs both projects, starts the practice app on the qa port, waits for it, and runs `make test ENV=qa TAGS=@smoke`. `VALID_PASSWORD` comes from a repository secret and is passed to that step only; nothing secret is written to disk.
+[`.github/workflows/tests.yml`](.github/workflows/tests.yml) installs both projects, starts the practice app on the qa port, waits for it, and runs `npm run lint`, `npm run typecheck` and then `make test ENV=qa TAGS=@smoke`. `VALID_PASSWORD` comes from a repository secret and is passed to that step only; nothing secret is written to disk.
+
+## Linting and formatting
+
+`npm run lint` runs oxlint with warnings treated as errors, then checks the formatting of the TypeScript, JavaScript and JSON files with Prettier. oxlint is used instead of ESLint because `typescript-eslint` doesn't support TypeScript 7 (the native compiler this project uses) yet: it needs the JavaScript compiler API that TypeScript 7 no longer ships. oxlint parses TypeScript itself and implements the core ESLint rules.
 
 ## Design notes
 
