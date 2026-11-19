@@ -17,8 +17,3 @@ Feature: Login
     # Notice we don't navigate to /login. We go straight to /orders!
     Given I navigate to the orders page
     Then I should be on the orders page
-
-  @wip
-  Scenario: A half-finished test that should be ignored
-    Given I navigate to the login page
-    When I do something that is not coded yet
