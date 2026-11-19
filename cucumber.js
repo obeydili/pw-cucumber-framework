@@ -2,22 +2,20 @@ const common = {
   paths: ['features/**/*.feature'],
   import: ['src/support/**/*.ts', 'src/steps/**/*.ts'],
   format: ['progress', 'html:reports/cucumber-report.html', 'json:reports/cucumber-report.json'],
-  tags: 'not @wip', // <-- Ignored globally across all profiles!
+  tags: 'not @wip',
 };
 
-// 1. The Default Profile (runs everything)
+// Default profile: everything except @wip.
 export default common;
 
-// 2. The CI Profile (Exported by name!)
+// CI profile (cucumber-js -p ci).
 export const ci = common;
 
-// 3. The Smoke Profile (only runs @smoke, ignores @wip)
 export const smoke = {
   ...common,
   tags: '@smoke and not @wip',
 };
 
-// 4. The Regression Profile (runs @regression, ignores @wip)
 export const regression = {
   ...common,
   tags: '@regression and not @wip',

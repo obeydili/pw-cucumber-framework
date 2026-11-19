@@ -5,7 +5,6 @@ export class OrdersPage extends BasePage {
     return this.page.locator('main').getByRole('link', { name: 'New order' });
   }
 
-  // 1. Expose the row locator for assertions
   getOrderRow(orderId: string) {
     return this.page.getByRole('row').filter({
       has: this.page.getByText(orderId, { exact: true }),
@@ -20,7 +19,6 @@ export class OrdersPage extends BasePage {
     await this.newOrderButton.click();
   }
 
-  // The Magic Filter Method!
   async viewOrder(orderId: string) {
     await this.getOrderRow(orderId).getByRole('link', { name: 'View' }).click();
   }

@@ -7,28 +7,25 @@ import { ApiClient } from '../api/ApiClient';
 import { OrdersApi } from '../api/OrdersApi';
 import * as fs from 'fs';
 
-// Give UI tests up to 10 seconds per step!
 setDefaultTimeout(10 * 1000);
 
 let browser: Browser;
 
 BeforeAll(async function () {
-  // THE FIX: Updated comment to reflect reality!
-  // Default to headless (hidden) unless explicitly passed HEADLESS=false.
-  browser = await chromium.launch({headless: config.isHeadless});
+  // Headless unless HEADLESS=false.
+  browser = await chromium.launch({ headless: config.isHeadless });
 });
 
 Before(async function (this: CustomWorld, scenario) {
   this.browser = browser;
-  // 1. Check the Cucumber tags for this specific scenario
   const tags = scenario.pickle.tags.map((tag) => tag.name);
 
   const isApiOnly = tags.includes('@api');
   const isHybrid = tags.includes('@hybrid');
 
-  // --- UI SETUP (For normal UI tests OR Hybrid tests) ---
+  // Browser context for UI and hybrid scenarios.
   if (!isApiOnly || isHybrid) {
-    // 2. Determine if we need to inject a saved session
+    // A role tag reuses the saved session from scripts/save-auth.ts instead of logging in through the UI.
     let storageState: string | undefined = undefined;
     if (tags.includes('@as-trader')) {
       storageState = 'auth/trader.json';
@@ -36,13 +33,11 @@ Before(async function (this: CustomWorld, scenario) {
       storageState = 'auth/approver.json';
     }
 
-    // ADD THIS SAFETY CHECK:
     if (storageState && !fs.existsSync(storageState)) {
       throw new Error(
         `CRITICAL: Session file not found at ${storageState}. Please run 'npm run auth:save' first!`,
       );
     }
-    // 3. Launch the context with the base URL AND the injected cookies (if any)
     this.context = await this.browser.newContext({
       baseURL: config.baseUrl,
       storageState: storageState,
@@ -51,17 +46,15 @@ Before(async function (this: CustomWorld, scenario) {
     this.page = await this.context.newPage();
   }
 
-  // --- API SETUP (For API tests OR Hybrid tests) ---
-
+  // API contexts for API and hybrid scenarios.
   if (isApiOnly || isHybrid) {
     const authActions = new AuthActions();
 
-    // If it's a Hybrid test, we need BOTH roles so the Trader can use the UI and the Approver can use the API!
+    // Hybrid: the trader acts in the UI (saved session) and the approver acts over the API.
     if (isHybrid) {
       const approverToken = await authActions.apiLogin(config.approverUser, config.validPassword);
       this.apiContexts['approver'] = await ApiClient.create(approverToken);
     }
-    // Legacy single-role logic for standard @api tests
     else {
       let token = '';
       if (tags.includes('@as-trader')) {
@@ -79,20 +72,18 @@ Before(async function (this: CustomWorld, scenario) {
 
 After(async function (this: CustomWorld, scenario) {
   if (scenario.result?.status === Status.FAILED) {
-    // SAFE SCREENSHOT: Only try to take a screenshot if this.page successfully initialized!
+    // API-only scenarios have no page.
     if (this.page) {
       const image = await this.page.screenshot();
       this.attach(image, 'image/png');
     }
   }
 
-  // SAFE TEARDOWN: Use optional chaining (?.) so it doesn't crash if they are undefined
+  // Optional chaining: each scenario type creates only some of these.
   await this.page?.close();
   await this.context?.close();
-  // Clean up the single API Context!
   await this.api?.dispose();
 
-  // THE FIX: Clean up ALL multi-role API Contexts dynamically!
   for (const ctx of Object.values(this.apiContexts)) {
     await ctx.dispose();
   }

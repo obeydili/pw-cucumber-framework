@@ -3,7 +3,6 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { usersData } from '../data/users';
 
-// Define the strict contract for our environment configuration
 export interface AppConfig {
   env: string;
   baseUrl: string;
@@ -16,30 +15,21 @@ export interface AppConfig {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 1. Determine the environment (default to 'dev' if not provided)
 const env = process.env.ENV || 'dev';
 
-// 2. Build the path to the correct .env file
-
-// --- OPTION 1: process.cwd() (Simpler, assumes command is run from project root) ---
-//const envPath = path.resolve(process.cwd(), `env/.env.${env}`);
-
-// --- OPTION 2: import.meta.url (Robust, calculates relative to this exact file) ---
+// Resolved from this file, not process.cwd(), so it works from any working directory.
 const envPath = path.resolve(__dirname, `../../env/.env.${env}`);
 
-// 3. Load the variables from that file into process.env
+// Variables already set in the shell (e.g. CI secrets) win over the file.
 dotenv.config({ path: envPath });
 
-// 4. Extract what we need and fail fast if it's missing!
-// Extract without the || '' fallback! Let them be undefined if missing.
-// Extract them to variables first!
 const baseUrl = process.env.BASE_URL;
 const validPassword = process.env.VALID_PASSWORD;
 const validUser = usersData.trader?.username;
 const approverUser = usersData.approver?.username;
 const isHeadless = process.env.HEADLESS !== 'false';
 
-// FIX: The Fail-Fast Gauntlet!
+// Fail fast with a clear message instead of a confusing login failure mid-run.
 if (!baseUrl) throw new Error(`CRITICAL: BASE_URL is missing in env/.env.${env}`);
 if (!validPassword) throw new Error(`CRITICAL: VALID_PASSWORD is missing in env/.env.${env}`);
 if (!validUser) throw new Error(`CRITICAL: trader username is missing in users.json`);

@@ -11,9 +11,7 @@ export class AuthActions {
     await loginPage.login(username, password);
   }
 
-  // NEW: The API Login Method!
   async apiLogin(username: string, password: string): Promise<string> {
-    // Spin up a quick, temporary API context just for logging in
     const apiContext = await request.newContext({ baseURL: config.baseUrl });
 
     try {
@@ -26,9 +24,8 @@ export class AuthActions {
       }
 
       const body = await response.json();
-      return body.token; // Extract and return the Bearer token!
+      return body.token;
     } finally {
-      //Always dispose of the temporary context to prevent memory leaks!
       await apiContext.dispose();
     }
   }

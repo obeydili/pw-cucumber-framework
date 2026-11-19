@@ -4,7 +4,7 @@ import { CustomWorld } from '../../support/world';
 import { LoginPage } from '../../pages/LoginPage';
 import { AuthActions } from '../../actions/AuthActions';
 import { config } from '../../support/env';
-import { usersData } from '../../data/users'; 
+import { usersData } from '../../data/users';
 
 Given('I navigate to the login page', async function (this: CustomWorld) {
   const loginPage = new LoginPage(this.page);
@@ -13,7 +13,6 @@ Given('I navigate to the login page', async function (this: CustomWorld) {
 
 When('I login with valid credentials', async function (this: CustomWorld) {
   const auth = new AuthActions(this.page);
-  // Blocker 1 FIXED: No more hardcoded credentials!
   await auth.loginAs(config.validUser, config.validPassword);
 });
 
@@ -28,7 +27,6 @@ When(
 When('I login with invalid credentials', async function (this: CustomWorld) {
   const auth = new AuthActions(this.page);
 
-  //  Use the specific persona!
   const hackerUser = usersData.invalidUser.username;
   const hackerPass = usersData.invalidUser.password;
   await auth.loginAs(hackerUser, hackerPass);
@@ -36,16 +34,14 @@ When('I login with invalid credentials', async function (this: CustomWorld) {
 
 Then('I should see an error message', async function (this: CustomWorld) {
   const loginPage = new LoginPage(this.page);
-  // We expect the exact error message element to be visible!
   await expect(loginPage.errorMessage).toBeVisible();
 });
 
 Then('I should be redirected to the orders page', async function (this: CustomWorld) {
-  // A simple Playwright assertion to verify the UI actually moved!
   await expect(this.page).toHaveURL(/.*orders.*/);
 });
 
 Then('I should be on the orders page', async function (this: CustomWorld) {
-  // ASSERTION: Verify we didn't get kicked back to the login screen!
+  // A missing or expired session would redirect to /login instead.
   await expect(this.page).toHaveURL(/.*orders.*/);
 });

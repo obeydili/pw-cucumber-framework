@@ -1,7 +1,6 @@
 import { BasePage } from './BasePage';
 
 export class OrderTicketPage extends BasePage {
-  // Using Playwright's Web First Locators (No CSS!)
   get symbolSelect() {
     return this.page.getByLabel('Symbol');
   }
@@ -18,10 +17,9 @@ export class OrderTicketPage extends BasePage {
     return this.page.getByRole('button', { name: 'Submit' });
   }
 
-  // A complete business action to fill out the whole ticket!
   async fillOrderTicket(symbol: string, side: string, qty: string, price: string) {
     await this.symbolSelect.selectOption(symbol);
-    // We use { exact: true } so "Buy" doesn't accidentally match a longer word.
+    // exact, so "Buy" doesn't also match a longer label.
     await this.page.getByLabel(side, { exact: true }).check();
     await this.quantityInput.fill(qty);
     await this.limitPriceInput.fill(price);

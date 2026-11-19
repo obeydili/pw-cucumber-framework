@@ -14,6 +14,5 @@ Feature: Login
 
   @ui @as-trader
   Scenario: Bypass login using saved session
-    # Notice we don't navigate to /login. We go straight to /orders!
     Given I navigate to the orders page
     Then I should be on the orders page
