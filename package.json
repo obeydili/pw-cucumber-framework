@@ -2,6 +2,7 @@
   "name": "pw-cucumber-framework",
   "version": "1.0.0",
   "description": "BDD test automation framework for a trading web app, built with Playwright, Cucumber and TypeScript (UI, API and hybrid scenarios).",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "devDependencies": {

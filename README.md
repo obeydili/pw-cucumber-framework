@@ -105,3 +105,7 @@ Each run writes `reports/cucumber-report.html` and `reports/cucumber-report.json
 ## Design notes
 
 See [NOTES.md](NOTES.md) for the reasoning behind the layers, the tag-driven setup and the test data approach.
+
+## License
+
+[MIT](LICENSE)
