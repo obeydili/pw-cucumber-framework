@@ -2,63 +2,52 @@ name: CI Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
-      # 1. Checkout OUR framework code
       - name: Checkout Framework
         uses: actions/checkout@v4
-        
-      # 2. Setup Node.js
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          
-      # 3. Install Dependencies for BOTH App and Framework
+
       - name: Install Dependencies
         run: |
-          # Install app dependencies
           cd practice-app && npm install
           cd ..
-          # Install framework dependencies
           npm ci
-          # Install Chromium for Playwright
           npx playwright install chromium --with-deps
 
-      # 4. Static checks
       - name: Lint and typecheck
         run: |
           npm run lint
           npm run typecheck
 
-      # 5. Create the Environment File (NO SECRETS ON DISK!)
+      # Only the URL goes into the env file; the password stays in the secret below.
       - name: Create QA Env File
         run: |
           echo "BASE_URL=http://localhost:3200" > env/.env.qa
 
-      # 6. Start Practice App and Wait
       - name: Start Practice App
         run: |
           cd practice-app
-          # Start it in the background using QA port (3200)
           npm run start:qa &
           npx --yes wait-on http://localhost:3200
 
-      # 7. Run the tests specifically on QA!
       - name: Run Smoke Suite
         env:
           VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
         run: |
           make test ENV=qa TAGS=@smoke
 
-      # 8. ALWAYS upload the entire reports folder!
       - name: Upload HTML Report
         if: always()
         uses: actions/upload-artifact@v4

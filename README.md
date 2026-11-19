@@ -102,7 +102,7 @@ Each run writes `reports/cucumber-report.html` and `reports/cucumber-report.json
 
 ## Continuous integration
 
-[`.github/workflows/tests.yml`](.github/workflows/tests.yml) installs both projects, starts the practice app on the qa port, waits for it, and runs `npm run lint`, `npm run typecheck` and then `make test ENV=qa TAGS=@smoke`. `VALID_PASSWORD` comes from a repository secret and is passed to that step only; nothing secret is written to disk.
+[`.github/workflows/tests.yml`](.github/workflows/tests.yml) installs both projects, runs `npm run lint` and `npm run typecheck`, starts the practice app on the qa port, waits for it, and runs `make test ENV=qa TAGS=@smoke`. `VALID_PASSWORD` comes from a repository secret and is passed to that step only; nothing secret is written to disk.
 
 ## Linting and formatting
 
