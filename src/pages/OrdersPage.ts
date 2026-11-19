@@ -12,7 +12,7 @@ export class OrdersPage extends BasePage {
   }
 
   async navigate() {
-    await this.page.goto('/orders');
+    await this.open('/orders');
   }
 
   async clickNewOrder() {

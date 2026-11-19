@@ -2,7 +2,7 @@ import { BasePage } from './BasePage';
 
 export class LoginPage extends BasePage {
   async navigate() {
-    await this.page.goto('/login');
+    await this.open('/login');
   }
 
   get username() {

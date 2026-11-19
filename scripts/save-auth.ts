@@ -1,12 +1,7 @@
 import { chromium } from '@playwright/test';
-import * as fs from 'fs';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
 import { LoginPage } from '../src/pages/LoginPage';
+import { usersData } from '../src/data/users';
 import { config } from '../src/support/env';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 async function saveSession(username: string, password: string, fileName: string) {
   console.log(`Saving session for ${fileName}...`);
@@ -29,9 +24,6 @@ async function saveSession(username: string, password: string, fileName: string)
 }
 
 async function main() {
-  const usersPath = path.resolve(__dirname, '../src/data/templates/users.json');
-  const usersData = JSON.parse(fs.readFileSync(usersPath, 'utf8'));
-
   await saveSession(usersData.trader.username, config.validPassword, 'trader');
   await saveSession(usersData.approver.username, config.validPassword, 'approver');
 }
